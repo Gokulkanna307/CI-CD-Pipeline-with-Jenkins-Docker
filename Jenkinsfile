@@ -63,10 +63,14 @@ pipeline {
             steps {
                 echo 'Verifying deployment...'
                 sh 'sleep 5'
-                sh 'curl -f http://localhost:3000/health || exit 1'
+                sh '''
+                    echo "Checking if container is running..."
+                    docker ps | grep node-app-container
+                    echo "Checking application health..."
+                    docker exec node-app-container curl -f http://localhost:3000/health || exit 1
+                '''
             }
         }
-    }
     
     post {
         success {
